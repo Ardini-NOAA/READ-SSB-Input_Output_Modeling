@@ -4,11 +4,11 @@ Who worked on this project: Greg Ardini
 
 When this project was created: This repo was created in May 2026 to increase the visibility and transparency of the Northeast I/O model. 
 
-What the project does: This repo serves as a central location for those interested in learning more about the Northeast I/O model
+What the project does: This repo serves as a central location for those interested in learning more about the Northeast I/O model.
 
-Why the project is useful: 
+Why the project is useful: Stakeholders are often interested in the economic contribution of regional fisheries beyond harvester sales (ex-vessel revenue). This repo serves as a resource for NEFSC staff to familiarize themselves with I/O modeling including strengths, weaknesses, and caveats.
 
-How users can get started with the project:
+How users can get started with the project: An overview document is available on the site.
 
 Where users can get help with the project: For questions on the contents of this repo, please reach out to Greg Ardini.
 
