@@ -1,0 +1,122 @@
+---
+title: "Redfish_Exemption_Review_2026"
+output: html_document
+date: "2026-04-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, include=FALSE}
+library(DBI)
+library(ROracle)
+library(dplyr)
+library(rstudioapi)
+library(ggpubr)
+library(data.table)
+library(lubridate)
+library(magrittr)
+library(Rcpp)
+library(rmarkdown)
+library(zoo)
+library(gtools)
+library(Quandl)
+library(reshape2)
+library(kableExtra)
+library(bookdown)
+library(RSQLite)
+library(rlang)
+library(tidyr)
+library(data.table)
+library(RColorBrewer)
+library(sandwich)
+library(MASS)
+library(zoo)
+library(sqldf)
+library(lubridate)
+library(ggplot2)
+library(ggthemes)
+library(scales)
+```
+
+```{r data extraction, echo=FALSE, message=FALSE, eval=FALSE}
+
+#Dataset starts in FY2021, as universal redfish exemption was implemented through FW61
+
+uid<- "gardini"
+psswd<- "777Finland$$$"
+
+connect_alias <- "NEFSC_pw_oraprod"
+drv <- dbDriver("Oracle")
+con.nefscdb1 <- dbConnect(drv, username = uid, password = psswd, dbname = connect_alias)
+
+#COMMERCIAL
+cams_land<-paste0("select a.area, a.camsid, a.date_trip as trip_date, a.dlrid, a.dlr_cflic, a.dlr_docn, a.dlr_rptid, a.dlr_stid, a.docid, a.itis_group1, a.itis_tsn, a.livlb,
+a.lndlb as landed, a.mesh_cat, a.month, a.negear, a.permit, a.port as trip_port, 
+a.rec, a.sectid, a.state as trip_state, a.subtrip, a.value as dollar_ssb, a.year,
+b.fmp, b.itis_name,
+c.negear_name, c.secgear_mapped,
+d.port_name as trip_port_name,
+e.hail_port as hport, e.hail_st as hpst, e.ves_crew as crew, e.ves_gtons as gtons, e.ves_hp as vhp, e.ves_len as len 
+              from cams_garfo.cams_land a, cams_garfo.cfg_itis b, cams_garfo.cfg_negear c, cams_garfo.cfg_port d, cams_garfo.match_vpsvessel e 
+              where a.year>=2021
+              and a.rec=0
+              and a.itis_tsn=b.itis_tsn
+              and a.negear=c.negear
+              and a.port=d.port
+              and a.camsid=e.camsid
+              order by camsid")
+
+
+cams_mri<-paste0("select distinct(a.camsid), a.mqrs_fishery, a.mqrs_mri as mri 
+              from cams_garfo.match_mqrs_mri a, cams_garfo.cams_land b 
+              where a.mqrs_fishery in ('MULTISPECIES')
+              and b.year>=2021
+              and a.camsid=b.camsid
+              order by camsid")
+
+cams_fishery<-paste0("select distinct(a.camsid), a.fishery_group, a.groundfish  
+              from cams_garfo.cams_fishery_group a, cams_garfo.cams_land b
+              where fishery_group in ('GROUND', 'GROUND_ASSUMED')
+              and b.year>=2021
+              and a.camsid=b.camsid
+              order by camsid")
+
+cams_subtrip<-paste0("select a.camsid, a.subtrip, a.da, a.df, a.em, a.gf, a.record_land, a.record_sail, a.redfish_exemption, a.trip_duration, a.vtr_crew, a.xlrg_gillnet_exemption 
+              from cams_garfo.cams_subtrip a
+              where trunc(record_sail) >= '01-MAY-21'")
+
+db1 <- dbSendQuery(con.nefscdb1,cams_land)
+f1  <- fetch(db1)
+
+db2 <- dbSendQuery(con.nefscdb1,cams_mri)
+f2  <- fetch(db2)
+
+db3 <- dbSendQuery(con.nefscdb1,cams_fishery)
+f3  <- fetch(db3)
+
+db4 <- dbSendQuery(con.nefscdb1,cams_subtrip)
+f4  <- fetch(db4)
+
+#Merge f1-f4 by camsid
+comm_1<-merge(f1, f2, by= c("CAMSID"))
+comm_2<-merge(comm_1, f3, by= c("CAMSID"))
+
+comm_3<-left_join(comm_2, f4, by = c("CAMSID", "SUBTRIP"))
+#f4_a <- f4 %>% distinct(CAMSID, .keep_all = TRUE)
+#comm_3<-merge(comm_2, f4_a, by= c("CAMSID"))
+
+comm_3$MULT_YEAR=ifelse(comm_3$MONTH > 4, comm_3$YEAR, (comm_3$YEAR-1))
+comm_3a<-subset(comm_3, comm_3$MULT_YEAR %in% c(2021, 2022, 2023, 2024, 2025))
+comm_3b<- comm_3a %>% filter(comm_3a$RECORD_SAIL>"2021-07-28")
+
+comm_3b$FISHERY_COMPONENT = ifelse(comm_3b$SECTID==2, 'Common Pool', 'Sector')
+
+comm_3b$DAYS_ABSENT <- difftime(comm_3b$RECORD_LAND, comm_3b$RECORD_SAIL, units = "days")
+comm_3b$TRIP_LENGTH <- as.numeric(comm_3b$DAYS_ABSENT)
+
+sector_all<-subset(comm_3b, comm_3b$FISHERY_COMPONENT %in% c('Sector'))
+
+write.csv(sector_all,file="Z:/R/Redfish_Exemption_Review/allgf_obs_2021_2025.csv") 
+```

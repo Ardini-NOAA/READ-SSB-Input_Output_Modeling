@@ -1,0 +1,117 @@
+---
+title: "IO_Expenditures"
+output: html_document
+date: "2026-05-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, include=FALSE}
+library(DBI)
+library(ROracle)
+library(dplyr)
+library(rstudioapi)
+library(ggpubr)
+library(data.table)
+library(lubridate)
+library(magrittr)
+library(Rcpp)
+library(rmarkdown)
+library(zoo)
+library(gtools)
+library(Quandl)
+library(reshape2)
+library(kableExtra)
+library(bookdown)
+library(RSQLite)
+library(rlang)
+library(tidyr)
+library(data.table)
+library(RColorBrewer)
+library(sandwich)
+library(MASS)
+library(zoo)
+library(sqldf)
+library(lubridate)
+library(ggplot2)
+library(ggthemes)
+library(scales)
+```
+
+```{r data extraction, echo=FALSE, message=FALSE, eval=FALSE}
+
+#Dataset starts in FY2021, as universal redfish exemption was implemented through FW61
+
+uid<- "gardini"
+psswd<- "888Greece$$$"
+
+connect_alias <- "NEFSC_pw_oraprod"
+drv <- dbDriver("Oracle")
+con.nefscdb1 <- dbConnect(drv, username = uid, password = psswd, dbname = connect_alias)
+
+common_vars<-paste0("select * from SSB_COST_SURVEY.VCS_COMMON_VARIABLES_MV order by hullnum, survey_year")
+
+cross_links<-paste0("select ap_num, hullnum, survey_year from SSB_COST_SURVEY.VCS_CROSS_DB_LINKS order by hullnum, survey_year")
+
+permit_vps_vessel<-paste0("select hull_id as HULLNUM, ap_num, hpst, len from NEFSC_GARFO.PERMIT_VPS_VESSEL")
+
+#COMMERCIAL
+cams_land<-paste0("select hullid as hullnum, itis_tsn, month, negear, status, year as survey_year, sum(lndlb) as lndlb, sum(value) as value 
+              from cams_garfo.cams_land  
+              where year in (2011, 2012, 2015, 2022)
+              and rec=0
+              group by year, month, hullid, negear, itis_tsn, status")
+
+cams_vtr_orphans<-paste0("select hullid as hullnum, itis_tsn, month, negear, status, year as survey_year, sum(lndlb) as lndlb, sum(value) as value 
+              from cams_garfo.cams_vtr_orphans  
+              where year in (2011, 2012, 2015, 2022)
+              and rec=0
+              group by year, month, hullid, negear, itis_tsn, status")
+
+
+db1 <- dbSendQuery(con.nefscdb1,common_vars)
+f1  <- fetch(db1)
+
+db2 <- dbSendQuery(con.nefscdb1,cross_links)
+f2  <- fetch(db2)
+
+db3 <- dbSendQuery(con.nefscdb1,permit_vps_vessel)
+f3  <- fetch(db3)
+
+db4 <- dbSendQuery(con.nefscdb1,cams_land)
+f4  <- fetch(db4)
+
+db5 <- dbSendQuery(con.nefscdb1,cams_vtr_orphans)
+f5  <- fetch(db5)
+
+#Merge common_vars and cross_links
+cost_1<-merge(f1, f2, by= c("HULLNUM", "SURVEY_YEAR"))
+
+common_vars_permit<-merge(cost_1, f3, by = c("HULLNUM", "AP_NUM"))
+
+common_vars_permit_2<-subset(common_vars_permit, !is.na(common_vars_permit$RMUI_COST)) #Filter non-response to RMUI
+
+common_vars_permit_3<-subset(common_vars_permit_2, !is.na(common_vars_permit_2$MOORING_FEES) | !is.na(common_vars_permit_2$PERMIT_FEES) | !is.na(common_vars_permit_2$VES_INSURANCE_COST)) #Filter non-response to Vessel Costs
+
+common_vars_permit_4<-subset(common_vars_permit_3, !is.na(common_vars_permit_3$FUEL_COST) | !is.na(common_vars_permit_3$BAIT_COST) | !is.na(common_vars_permit_3$FOOD_COST) | !is.na(common_vars_permit_3$ICE_COST) | !is.na(common_vars_permit_3$CATCH_HANDLING_COST)) #Filter non-response to Operating Costs
+
+common_vars_permit_5<-subset(common_vars_permit_4, !is.na(common_vars_permit_4$CREW_PYMTS) | !is.na(common_vars_permit_4$CAPTAIN_PYMTS) | !is.na(common_vars_permit_4$CREW_BENEFITS_VAL)) #Filter non-response to Crew Payments
+
+common_vars_permit_6<-subset(common_vars_permit_5, !is.na(common_vars_permit_5$VEHICLE_USAGE_COST) | !is.na(common_vars_permit_5$BUSINESS_TRAVEL_COST) | !is.na(common_vars_permit_5$ASSOCIATION_FEES) | !is.na(common_vars_permit_5$PROFESSIONAL_FEES) | !is.na(common_vars_permit_5$NONCREW_LABOR_COST) | !is.na(common_vars_permit_5$ADVERTISING_COST) | !is.na(common_vars_permit_5$COMMUNICATION_COST) | !is.na(common_vars_permit_5$OFFICE_EXP)) #Filter non-response to Overhead
+
+#Revenue
+revenue_1<-rbind(f4, f5)
+
+#Merge in gearkey. This will likely be the same spreadsheet used for the survey sampling frame but double-check
+
+#Impute prices. Use the monthly prices by species sent by GARFO staff.
+
+#Bring in deflator. Try using API key.
+
+#Define primary gear
+
+#Define fleets
+
+```
