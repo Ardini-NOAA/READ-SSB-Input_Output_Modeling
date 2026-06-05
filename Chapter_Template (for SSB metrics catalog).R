@@ -16,42 +16,40 @@ Revenue distributions are updated every 1-2 years.
 * Time Series: Model can be run at different time periods but generally offers the greatest utility when period of interest closely aligns with input data years.
 
 ### Point of Contact
-Greg Ardini
+Greg Ardini (Gregory.ardini@noaa.gov)
 
 ### Data Outputs/Outlets
 https://github.com/Ardini-NOAA/READ-SSB-Input_Output_Modeling.git
 
 ## List of Metrics
 
-- Employment
-- Direct Impacts
-- Indirect Impacts
-- Inducted Impacts
+* Employment
+* Direct Impacts
+* Indirect Impacts
+* Inducted Impacts
 
 ## Metric Descriptions
 
-- Employment: Industry-specific count of seasonal employment as a mix of full-time, part-time, and seasonal jobs. 
-As individuals can hold more than one job, the count of jobs is not the same as the count of employed individuals.
-- Direct Impacts: The initial effects to a local industry or industries due to the activity or policy being analyzed. 
-For example, an increase in fishing quota may increase fishing effort and landings, resulting in a higher direct impact for the fishing industry as well as the industries they are directly purchasing from (e.g. fuel, bait, ice suppliers). 
-- Indirect Impacts: The effects stemming from business to business purchases in the supply chain taking place in the region (generally the Northeast region). 
-For example, when a higher fishing quota increase effort and thereby fuel consumption, the fuel supplier adjusts their spending with other industries.  
-- Inducted Impacts: The effects in the region stemming from changes in household spending. 
-For example, how household spending shifts in response to an increase/decrease in seafood production in the Northeast region.
 
+| **Metric** | **Description** |
+| :--- | :--- |
+| **Employment** | Industry-specific count of seasonal employment as a mix of full-time, part-time, and seasonal jobs. As individuals can hold more than one job, the count of jobs is not the same as the count of employed individuals. |
+| **Direct Impacts** | The initial effects to a local industry or industries due to the activity or policy being analyzed. For example, an increase in fishing quota may increase fishing effort and landings, resulting in a higher direct impact for the fishing industry as well as the industries they are directly purchasing from (e.g., fuel, bait, ice suppliers). |
+| **Indirect Impacts** | The effects stemming from business-to-business purchases in the supply chain taking place in the region (generally the Northeast region). For example, when a higher fishing quota increases effort and thereby fuel consumption, the fuel supplier adjusts their spending with other industries. |
+| **Induced Impacts** | The effects in the region stemming from changes in household spending. For example, how household spending shifts in response to an increase or decrease in seafood production in the Northeast region. |
 ## Additional Methods/Decision Rules
 
 ## Data Sources and Code
 
 ### Data Sources
-- Greater Atlantic Region Commercial Fishing Business Cost Survey
-- CAMS
-- IMPLAN (license required) is used to run the Input-Output Model
+* Greater Atlantic Region Commercial Fishing Business Cost Survey
+* CAMS
+* IMPLAN (license required) is used to run the Input-Output Model
 
 ### Code
-Metric Creation Code File Location:
-Read Me file (file to run code):
-Website Production Code Location:
-Read Me file (file to run code):
+Metric Creation Code File Location: https://github.com/Ardini-NOAA/READ-SSB-Input_Output_Modeling/
+Read Me file (file to run code): N/A
+Website Production Code Location:N/A
+Read Me file (file to run code): N/A
 
   **The latter are for if thre is a different location for a stand alone website
