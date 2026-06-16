@@ -1,12 +1,11 @@
 
-# Input-Output Modeling
+# Northeast Input-Output Model
 
 ## Product Overview
 
 Input Output Modeling is a method of evaluating the economic contribution of commercial and recreational fishing and to assess downstream impacts. 
 The Northeast Region Commercial Fishing Input-Output Model (NERIOM) was developed to allocate revenues and costs by fishing fleets.  
-Each cost category is assigned to one or more sectors that correspond to the IMPLAN cloud software for running the model. 
-The software is used to estimate various impact metrics from the NEFSC produced datasets.
+
 
 * Unit: Fishing fleets defined by gear and vessel length
 * Summary Group(s): Analyses typically conducted for the Northeast region (Maine to North Carolina) or by state
@@ -39,6 +38,11 @@ https://github.com/Ardini-NOAA/READ-SSB-Input_Output_Modeling.git
 | **Induced Impacts** | The effects in the region stemming from changes in household spending. For example, how household spending shifts in response to an increase or decrease in seafood production in the Northeast region. |
 ## Additional Methods/Decision Rules
 
+Each cost category is assigned to one or more sectors that correspond to the IMPLAN cloud software for running the model. 
+The software is used to estimate various impact metrics from the NEFSC produced datasets.
+
+### Dollar Values
+
 ## Data Sources and Code
 
 ### Data Sources
@@ -51,5 +55,3 @@ Metric Creation Code File Location: https://github.com/Ardini-NOAA/READ-SSB-Inpu
 Read Me file (file to run code): N/A
 Website Production Code Location:N/A
 Read Me file (file to run code): N/A
-
-  **The latter are for if thre is a different location for a stand alone website
